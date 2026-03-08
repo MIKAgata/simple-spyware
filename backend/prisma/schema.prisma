@@ -1,0 +1,25 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Agent {
+  id         String   @id @default(uuid())
+  hostname   String   @unique
+  ip_address String
+  last_seen  DateTime @updatedAt
+  logs       Log[]
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  type      String   // 'clipboard', 'system', 'heartbeat'
+  content   String
+  createdAt DateTime @default(now())
+  agent     Agent    @relation(fields: [agentHostname], references: [hostname])
+  agentHostname String
+}
